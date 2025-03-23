@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Model Viewer Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    
+    #model-container {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+    
+    .controls {
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 80%;
+      padding: 8px;
+      margin-right: 10px;
+    }
+    
+    button {
+      padding: 8px 16px;
+      background-color: #2697FF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .success {
+      border-left-color: #4CAF50;
+    }
+    
+    .error {
+      border-left-color: #F44336;
+    }
+    
+    #test-results {
+      margin-top: 20px;
+      background-color: #f8f8f8;
+      padding: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>3D Model Viewer Test</h1>
+  <p>This page tests loading 3D models from the backend with proper CORS handling.</p>
+  
+  <div class="controls">
+    <input type="text" id="model-url" placeholder="Model URL (e.g., /model/models/z-anatomy/Muscular.glb)" 
+      value="http://34.30.180.220//model/models/z-anatomy/Muscular.glb">
+    <button id="load-btn">Load Model</button>
+    <button id="check-btn">Check Model Exists</button>
+  </div>
+  
+  <div class="status" id="status">Status: Ready to load model</div>
+  
+  <div id="model-container"></div>
+  
+  <div id="test-results"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/DRACOLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="assets/js/enhanced_three_viewer.js"></script>
+  
+  <script>
+    // Initialize the viewer
+    const viewer = new EnhancedThreeViewer('model-container');
+    
+    // Get references to DOM elements
+    const modelUrlInput = document.getElementById('model-url');
+    const loadButton = document.getElementById('load-btn');
+    const checkButton = document.getElementById('check-btn');
+    const statusEl = document.getElementById('status');
+    const testResultsEl = document.getElementById('test-results');
+    
+    // Set up event listeners
+    loadButton.addEventListener('click', loadModel);
+    checkButton.addEventListener('click', checkModel);
+    
+    // Custom callback for model loading
+    viewer.modelLoadedCallback = function(success) {
+      if (success) {
+        updateStatus('Model loaded successfully!', 'success');
+      } else {
+        updateStatus('Error loading model', 'error');
+      }
+    };
+
+    // Function to check if a model exists on the server    
+    async function checkModel() {
+      const url = modelUrlInput.value.trim();
+      if (!url) {
+        updateStatus('Please enter a valid URL', 'error');
+        return;
+      }
+      
+      // Extract the path from the URL
+      let modelPath = url;
+      
+      // If it's a full URL, extract just the path part after the domain
+      if (url.includes('://')) {
+        const urlObj = new URL(url);
+        modelPath = urlObj.pathname;
+      }
+      
+      // Remove any leading /model/ segment
+      if (modelPath.startsWith('/model/')) {
+        modelPath = modelPath.substring(7);
+      }
+      
+      updateStatus(`Checking if model exists: ${modelPath}...`, '');
+      
+      // Build the check URL
+      const baseUrl = url.includes('://') ? 
+        url.substring(0, url.indexOf('/', 8)) : 
+        'http://34.30.180.220/';
+      
+      const checkUrl = `${baseUrl}/check_model/${modelPath}`;
+      
+      try {
+        const response = await fetch(checkUrl);
+        const data = await response.json();
+        
+        // Display the results
+        testResultsEl.innerHTML = `
+          <h3>Model Check Results</h3>
+          <p><strong>Requested:</strong> ${data.requested_file}</p>
+          <p><strong>Exists:</strong> ${data.any_exists ? 'Yes' : 'No'}</p>
+          <h4>Search Results:</h4>
+          <ul>
+            ${data.search_results.map(result => `
+              <li>
+                <strong>${result.location}:</strong> ${result.exists ? '✅' : '❌'}<br>
+                Path: ${result.path}<br>
+                ${result.exists ? `Size: ${result.size_bytes} bytes, Readable: ${result.readable ? 'Yes' : 'No'}` : ''}
+              </li>
+            `).join('')}
+          </ul>
+          <h4>Model Directories Content:</h4>
+          <ul>
+            ${data.model_directories.map(dir => `
+              <li>
+                <strong>${dir.dir}</strong><br>
+                Files: ${dir.files ? dir.files.join(', ') : 'None'}
+              </li>
+            `).join('')}
+          </ul>
+        `;
+        
+        updateStatus(`Model check completed: ${data.any_exists ? 'Found' : 'Not found'}`, data.any_exists ? 'success' : 'error');
+      } catch (error) {
+        testResultsEl.innerHTML = `<p>Error checking model: ${error.message}</p>`;
+        updateStatus(`Error checking model: ${error.message}`, 'error');
+      }
+    }
+    
+    // Function to load a model
+    async function loadModel() {
+      const url = modelUrlInput.value.trim();
+      if (!url) {
+        updateStatus('Please enter a valid URL', 'error');
+        return;
+      }
+      
+      updateStatus('Loading model...', '');
+      
+      try {
+        // First try a fetch with cors mode to see if CORS is properly configured
+        const corsTest = await fetchWithTimeout(url, {
+          method: 'HEAD',
+          mode: 'cors',
+          credentials: 'same-origin',
+          signal: AbortSignal.timeout(5000) // 5 second timeout
+        }).catch(() => ({ ok: false }));
+        
+        if (corsTest.ok) {
+          updateStatus('URL is accessible with CORS, loading model...', '');
+        } else {
+          updateStatus('URL may have CORS issues, trying alternate load methods...', '');
+        }
+        
+        // Try to load the model
+        viewer.loadModel(url)
+          .then(success => {
+            console.log('Load result:', success);
+          })
+          .catch(error => {
+            updateStatus(`Error: ${error.message}`, 'error');
+            
+            // Try a fallback if this was a painted model
+            if (url.includes('painted_model')) {
+              const fallbackUrl = 'http://34.30.180.220//model/models/z-anatomy/Muscular.glb';
+              updateStatus(`Trying fallback model at ${fallbackUrl}...`, '');
+              
+              viewer.loadModel(fallbackUrl)
+                .then(success => {
+                  if (success) {
+                    updateStatus('Fallback model loaded successfully!', 'success');
+                  } else {
+                    updateStatus('Failed to load fallback model', 'error');
+                  }
+                })
+                .catch(fallbackError => {
+                  updateStatus(`Error loading fallback: ${fallbackError.message}`, 'error');
+                });
+            }
+          });
+      } catch (error) {
+        updateStatus(`Error: ${error.message}`, 'error');
+      }
+    }
+    
+    // Function to update status message
+    function updateStatus(message, type) {
+      statusEl.textContent = `Status: ${message}`;
+      statusEl.className = 'status';
+      if (type) {
+        statusEl.classList.add(type);
+      }
+    }
+    
+    // Helper function for fetch with timeout
+    function fetchWithTimeout(url, options = {}) {
+      const { timeout = 8000 } = options;
+      
+      return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timed out')), timeout)
+        )
+      ]);
+    }
+  </script>
+</body>
+</html> 

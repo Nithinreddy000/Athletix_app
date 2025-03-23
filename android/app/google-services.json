@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "136392355108",
+    "project_id": "athletemanagementsystem-8fa62",
+    "storage_bucket": "athletemanagementsystem-8fa62.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136392355108:android:99f0452394217e2d3497b1",
+        "android_client_info": {
+          "package_name": "athelete_management.system12"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136392355108-jj1ri7qrddcte2affofiedr637vas8q2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "athelete_management.system12",
+            "certificate_hash": "aceef4a4e1360c71950d110691e03a43f5a9ff2f"
+          }
+        },
+        {
+          "client_id": "136392355108-lo1kc7njm9ogg6c12tae3l7psq05d2mq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhAkh6jGlfgjZoynWydwrSuNjzlZMlzb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136392355108-lo1kc7njm9ogg6c12tae3l7psq05d2mq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "136392355108-lpb0v4mf8mej22bebvbvmp511d3fcoua.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "atheletemanagementsystem"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+} 

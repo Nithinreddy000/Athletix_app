@@ -1,0 +1,3 @@
+-keep class com.google_mlkit_commons.** { *; }
+-keepclassmembers class com.google_mlkit_commons.** { *; }
+-dontwarn com.google_mlkit_commons.** 

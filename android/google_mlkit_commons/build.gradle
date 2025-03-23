@@ -1,0 +1,31 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace "com.google_mlkit_commons"
+    compileSdkVersion 34
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    buildFeatures {
+        buildConfig = false
+    }
+}
+
+dependencies {
+    implementation 'com.google.mlkit:vision-common:17.3.0'
+} 

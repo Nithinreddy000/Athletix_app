@@ -1,0 +1,71 @@
+name: performance_analysis
+description: A performance analysis application for athletes.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.1.0
+  fl_chart: ^0.65.0
+  provider: ^6.1.1
+  cloud_firestore: 5.6.2
+  firebase_core: ^3.10.1
+  firebase_auth: ^5.4.0
+  firebase_storage: 12.4.1
+  intl: ^0.19.0
+  file_picker: ^6.1.1
+  shared_preferences: ^2.2.2
+  http: ^1.1.0
+  http_parser: ^4.0.2
+  flutter_svg: ^2.0.9
+  google_sign_in: ^6.2.1
+  image_picker: ^1.0.7
+  firebase_admin: ^0.3.0
+  model_viewer_plus: ^1.7.0
+  camera: ^0.10.5+9
+  google_mlkit_pose_detection: ^0.10.0
+  google_mlkit_commons: ^0.6.1
+  google_mlkit_text_recognition: ^0.11.0
+  path_provider: ^2.1.2
+  permission_handler: ^11.1.0
+  android_intent_plus: ^4.0.3
+  share_plus: ^7.2.1
+  pdf: ^3.10.7
+  video_player: ^2.8.1
+  percent_indicator: ^3.0.1
+  media_kit: ^1.1.10
+  media_kit_video: ^1.2.4
+  media_kit_libs_video: ^1.0.4
+  wakelock_plus: ^1.1.4
+  cloudinary_public: ^0.21.0
+  flutter_gestures: ^0.0.1
+  collection: ^1.17.0
+  universal_html: ^2.2.4
+  webview_flutter: ^4.4.2
+  webview_flutter_android: ^3.12.1
+  webview_flutter_wkwebview: ^3.9.4
+  webview_flutter_web: ^0.2.2+1
+  webview_flutter_platform_interface: ^2.6.0
+  flutter_gl: ^0.0.21
+  flutter_unity_widget: ^2022.2.0
+  js: ^0.6.7
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - web/assets/js/
+    - web/assets/js/babylon_viewer.js
